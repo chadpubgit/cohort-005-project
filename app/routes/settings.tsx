@@ -23,6 +23,7 @@ import { data, isRouteErrorResponse, Link } from "react-router";
 import { db } from "~/db";
 import { and, eq } from "drizzle-orm";
 import { formatPrice } from "~/lib/utils";
+import { getDecidedRefundRequestsForLearner } from "~/lib/refunds.server";
 
 const settingsSchema = z.object({
   name: z.string().trim().min(1, "Name cannot be empty."),
@@ -75,6 +76,11 @@ export async function loader({ request }: Route.LoaderArgs) {
     )
     .all();
 
+  const decidedRefundRequests = getDecidedRefundRequestsForLearner(
+    db,
+    currentUserId
+  );
+
   return {
     user: {
       id: currentUser.id,
@@ -84,6 +90,7 @@ export async function loader({ request }: Route.LoaderArgs) {
       role: currentUser.role,
     },
     openRefundRequests,
+    decidedRefundRequests,
   };
 }
 
@@ -122,7 +129,7 @@ export async function action({ request }: Route.ActionArgs) {
 }
 
 export default function Settings({ loaderData }: Route.ComponentProps) {
-  const { user, openRefundRequests } = loaderData;
+  const { user, openRefundRequests, decidedRefundRequests } = loaderData;
   const fetcher = useFetcher();
   const nameInputRef = useRef<HTMLInputElement>(null);
 
@@ -240,6 +247,47 @@ export default function Settings({ loaderData }: Route.ComponentProps) {
                 <p className="mt-2 text-sm">{refundRequest.reason}</p>
               </div>
             ))}
+          </CardContent>
+        </Card>
+      )}
+
+      {decidedRefundRequests.length > 0 && (
+        <Card className="mt-8 max-w-md">
+          <CardHeader>
+            <h2 className="text-lg font-semibold">Decided Refund Requests</h2>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {decidedRefundRequests.map((refundRequest) => {
+              const approved = refundRequest.status === RefundStatus.Approved;
+              return (
+                <div key={refundRequest.id} className="rounded-md border p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <Link
+                      to={`/courses/${refundRequest.courseSlug}`}
+                      className="font-medium hover:underline"
+                    >
+                      {refundRequest.courseTitle}
+                    </Link>
+                    <span
+                      className={
+                        approved
+                          ? "shrink-0 rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-400"
+                          : "shrink-0 rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
+                      }
+                    >
+                      {approved ? "Approved" : "Declined"}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {approved && refundRequest.amountRefunded !== null
+                      ? `${formatPrice(refundRequest.amountRefunded)} coming back to you`
+                      : "No refund"}
+                    {refundRequest.resolvedAt &&
+                      ` · decided ${new Date(refundRequest.resolvedAt).toLocaleDateString()}`}
+                  </p>
+                </div>
+              );
+            })}
           </CardContent>
         </Card>
       )}
