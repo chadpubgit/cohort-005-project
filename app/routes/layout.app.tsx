@@ -3,6 +3,10 @@ import type { Route } from "./+types/layout.app";
 import { Sidebar } from "~/components/sidebar";
 import { DevUI } from "~/components/dev-ui";
 import { Toaster } from "sonner";
+import {
+  NotificationsPrototypeProvider,
+  PrototypeMain,
+} from "~/components/notifications.prototype";
 import { getCurrentUserId, getDevCountry } from "~/lib/session";
 import { getCountryTierInfo, COUNTRIES } from "~/lib/ppp";
 import { eq, and, or, sql, desc } from "drizzle-orm";
@@ -228,6 +232,12 @@ export default function AppLayout({ loaderData }: Route.ComponentProps) {
   } = loaderData;
 
   return (
+    // PROTOTYPE: provider holds fake Notifications per DevUI user + the variant switcher.
+    <NotificationsPrototypeProvider
+      key={currentUser?.id ?? "signed-out"}
+      role={currentUser?.role ?? null}
+      isTeamAdmin={userIsTeamAdmin}
+    >
     <div className="flex h-screen overflow-hidden">
       <Sidebar
         currentUser={currentUser}
@@ -235,7 +245,9 @@ export default function AppLayout({ loaderData }: Route.ComponentProps) {
         isTeamAdmin={userIsTeamAdmin}
       />
       <main className="flex-1 overflow-y-auto">
-        <Outlet />
+        <PrototypeMain>
+          <Outlet />
+        </PrototypeMain>
       </main>
       <DevUI
         users={users}
@@ -246,5 +258,6 @@ export default function AppLayout({ loaderData }: Route.ComponentProps) {
       />
       <Toaster position="bottom-right" richColors closeButton />
     </div>
+    </NotificationsPrototypeProvider>
   );
 }
