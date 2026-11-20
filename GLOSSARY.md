@@ -1,6 +1,10 @@
 # Cadence
 
+<<<<<<< HEAD
 Cadence sells video courses to students. This glossary covers the language around buying, taking and refunding courses, and telling people about it.
+=======
+Cadence sells video courses to students. This glossary covers the language around buying, taking and refunding courses, and around telling people what has happened.
+>>>>>>> c26565705b6dae0d9613a7027942d46b366c6e26
 
 ## Language
 
@@ -103,6 +107,7 @@ A Refund where the money couldn't be sent. The Refund Request stays approved, be
 The amount of Watched time on a course past which a Student can no longer get a Refund, because they've had the course.
 _Avoid_: Watch cap, Viewing threshold
 
+<<<<<<< HEAD
 ### Notifications
 
 **Notification**:
@@ -125,3 +130,24 @@ A Student's own writing about a Lesson, private to the Student who wrote it.
 One per Student per Lesson. A Note is not a Comment — a Comment is addressed
 to other people, a Note is addressed to nobody.
 _Avoid_: Annotation, scratchpad, memo
+=======
+### Questions
+
+**Question**:
+A top-level comment a person posts on a lesson.
+_Avoid_: Comment (on its own), Thread, Post
+
+**Reply**:
+A comment posted in answer to a Question. A Reply can't itself be replied to.
+_Avoid_: Answer, Response
+
+### Notifications
+
+**Notification**:
+A message Cadence puts in a person's in-app inbox to tell them something happened that concerns them. It stays until they read or dismiss it.
+_Avoid_: Alert, Toast, Message
+
+**Toast**:
+Brief feedback on something a person has just done themselves. It disappears on its own and is never kept.
+_Avoid_: Notification, Alert
+>>>>>>> c26565705b6dae0d9613a7027942d46b366c6e26
